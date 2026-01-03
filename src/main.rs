@@ -63,6 +63,7 @@ fn main() -> anyhow::Result<()> {
         args.min_size,
         args.no_ignore,
         &args.ignore,
+        args.hidden,
         &scan_progress,
     )?;
     let msg = format!("Found {} files", files.len());

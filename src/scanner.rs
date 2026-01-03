@@ -39,6 +39,7 @@ pub fn scan_files(
     min_size: u64,
     no_ignore: bool,
     extra_ignore: &[String],
+    include_hidden: bool,
     progress: &ProgressBar,
 ) -> Result<Vec<walkdir::DirEntry>> {
     let ignored: HashSet<&str> = if no_ignore {
@@ -60,13 +61,13 @@ pub fn scan_files(
     let mut scanned = 0u64;
 
     let iter = walker.into_iter().filter_entry(|e| {
-        if ignored.is_empty() {
-            return true;
-        }
-        if e.file_type().is_dir()
-            && let Some(name) = e.file_name().to_str()
-        {
-            return !ignored.contains(name);
+        if let Some(name) = e.file_name().to_str() {
+            if !include_hidden && name.starts_with('.') && name != "." {
+                return false;
+            }
+            if e.file_type().is_dir() && ignored.contains(name) {
+                return false;
+            }
         }
         true
     });

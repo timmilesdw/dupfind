@@ -28,6 +28,10 @@ pub struct Args {
     #[arg(short, long = "ignore", value_name = "DIR")]
     pub ignore: Vec<String>,
 
+    /// Include hidden files and directories (starting with '.')
+    #[arg(short = 'H', long)]
+    pub hidden: bool,
+
     /// Quick hash sample size in bytes
     #[arg(long, default_value = "8192")]
     pub quick_hash_size: usize,

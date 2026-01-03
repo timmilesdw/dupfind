@@ -46,15 +46,13 @@ dupfind -i logs -i tmp /project     # ignore additional directories
 
 ```
 -L, --follow-links     Follow symbolic links
+-., --hidden           Include hidden files (starting with '.')
 -l, --log-level        Log level (off, error, warn, info, debug, trace)
 -o, --output-json      Save results to JSON file
 -i, --ignore           Additional directories to ignore (repeatable)
 --no-ignore            Don't ignore common dirs (.git, node_modules, etc.)
 --min-size             Skip files smaller than N bytes
 --threads              Thread count (0 = auto)
---quick-hash-size      Quick hash sample size in bytes (default: 8192)
---quick-buffer-size    Quick hash buffer in KB (default: 64)
---full-buffer-size     Full hash buffer in MB (default: 1)
 ```
 
 ## Benchmarks
