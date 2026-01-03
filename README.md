@@ -50,7 +50,6 @@ dupfind -i logs -i tmp /project     # ignore additional directories
 -l, --log-level        Log level (off, error, warn, info, debug, trace)
 -o, --output-json      Save results to JSON file
 -i, --ignore           Additional directories to ignore (repeatable)
---no-ignore            Don't ignore common dirs (.git, node_modules, etc.)
 --min-size             Skip files smaller than N bytes
 --threads              Thread count (0 = auto)
 ```
