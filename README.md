@@ -8,6 +8,27 @@ Fast duplicate file finder in Rust. Uses two-phase hashing (quick hash -> full h
 
 ## Installation
 
+### Download binary
+
+Download the latest release from [Releases](https://github.com/timmilesdw/dupfind/releases):
+
+| Platform | File |
+|----------|------|
+| Linux x64 | `dupfind-*-linux-x64.tar.gz` |
+| Linux x64 (static) | `dupfind-*-linux-x64-musl.tar.gz` |
+| Linux ARM64 | `dupfind-*-linux-arm64.tar.gz` |
+| macOS Intel | `dupfind-*-macos-x64.tar.gz` |
+| macOS Apple Silicon | `dupfind-*-macos-arm64.tar.gz` |
+| Windows x64 | `dupfind-*-windows-x64.zip` |
+
+```bash
+# Example for Linux/macOS
+tar -xzf dupfind-*.tar.gz
+sudo mv dupfind /usr/local/bin/
+```
+
+### Build from source
+
 ```bash
 cargo build --release
 ```

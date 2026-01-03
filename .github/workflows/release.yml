@@ -17,22 +17,22 @@ jobs:
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            archive: tar.gz
+            name: linux-x64
           - target: x86_64-unknown-linux-musl
             os: ubuntu-latest
-            archive: tar.gz
+            name: linux-x64-musl
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
-            archive: tar.gz
+            name: linux-arm64
           - target: x86_64-apple-darwin
             os: macos-latest
-            archive: tar.gz
+            name: macos-x64
           - target: aarch64-apple-darwin
             os: macos-latest
-            archive: tar.gz
+            name: macos-arm64
           - target: x86_64-pc-windows-msvc
             os: windows-latest
-            archive: zip
+            name: windows-x64
 
     steps:
       - uses: actions/checkout@v4
@@ -66,21 +66,21 @@ jobs:
         if: matrix.os != 'windows-latest'
         run: |
           cd target/${{ matrix.target }}/release
-          tar -czvf ../../../dupfind-${{ github.ref_name }}-${{ matrix.target }}.tar.gz dupfind
+          tar -czvf ../../../dupfind-${{ github.ref_name }}-${{ matrix.name }}.tar.gz dupfind
           cd ../../..
 
       - name: Package (Windows)
         if: matrix.os == 'windows-latest'
         run: |
           cd target/${{ matrix.target }}/release
-          7z a ../../../dupfind-${{ github.ref_name }}-${{ matrix.target }}.zip dupfind.exe
+          7z a ../../../dupfind-${{ github.ref_name }}-${{ matrix.name }}.zip dupfind.exe
           cd ../../..
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dupfind-${{ matrix.target }}
-          path: dupfind-${{ github.ref_name }}-${{ matrix.target }}.*
+          name: dupfind-${{ matrix.name }}
+          path: dupfind-${{ github.ref_name }}-${{ matrix.name }}.*
 
   release:
     name: Create Release
