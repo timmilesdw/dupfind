@@ -1,6 +1,6 @@
 # dupfind
 
-[![CI](https://github.com/timmilesdw/dupfind/actions/workflows/ci.yml/badge.svg)](https://github.com/timmilesdw/dupfind/actions/workflows/ci.yml)
+[![CI](https://github.com/timmilesdw/dupfind/actions/workflows/ci.yml/badge.svg)](https://github.com/timmilesdw/dupfind/actions/workflows/ci.yml) ![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=for-the-badge&logo=rust&logoColor=white)
 
 Fast duplicate file finder in Rust. Uses two-phase hashing (quick hash -> full hash) and parallel processing.
 
