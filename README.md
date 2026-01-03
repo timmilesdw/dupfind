@@ -40,32 +40,16 @@ dupfind -i logs -i tmp /project     # ignore additional directories
 
 > ⚠️ These benchmarks were generated with AI assistance on synthetic data. Take them with a grain of salt and run your own tests.
 
-Compared against [fclones](https://github.com/pkolaczk/fclones) (Rust) and [fdupes](https://github.com/adrianlopezroche/fdupes) (C).
+Compared against [fclones](https://github.com/pkolaczk/fclones) (Rust) and [fdupes](https://github.com/adrianlopezroche/fdupes) (C). Apple M3, macOS.
 
-### Small files (100 files, 5MB total)
+| Test | dupfind | fclones | fdupes |
+|------|---------|---------|--------|
+| small (100 files, 400KB) | ~5ms | 31ms | ~5ms |
+| medium (500 files, 50MB) | **19ms** | 42ms | 98ms |
+| large (200 files, 200MB) | **32ms** | 41ms | 345ms |
+| mixed | **9ms** | 32ms | 46ms |
 
-| Tool | Time | Notes |
-|------|------|-------|
-| **dupfind** | **5.9ms** | |
-| fdupes | 21ms | 3.6x slower |
-| fclones | 32ms | 5.5x slower |
-
-### Large files (40 files, 400MB total)
-
-| Tool | Time | Notes |
-|------|------|-------|
-| **fclones** | **43ms** | Better I/O optimization |
-| dupfind | 49ms | 1.14x slower |
-| fdupes | 622ms | Single-threaded |
-
-### Why dupfind is faster on small files
-
-dupfind has minimal startup overhead, it does only:
-1. Group by size
-2. Quick hash (first 8KB)
-3. Full hash (only for quick hash collisions)
-
-fclones performs additional analysis (hardlink detection, path grouping, prefix/suffix matching) which adds overhead but provides more features.
+On small files dupfind and fdupes are roughly equal (results vary between runs). On medium/large files dupfind wins thanks to parallel processing.
 
 ### Run benchmarks yourself
 
