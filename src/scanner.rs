@@ -10,47 +10,73 @@ use walkdir::WalkDir;
 
 use crate::utils::INTERRUPTED;
 
-const DEFAULT_IGNORED_DIRS: &[&str] = &[
-    ".git",
-    "node_modules",
-    "__pycache__",
-    ".venv",
-    "venv",
-    ".tox",
-    "target",
-    "build",
-    "dist",
-    ".idea",
-    ".vscode",
-    ".cache",
-    ".npm",
-    ".cargo",
-    "vendor",
-    ".bundle",
-    "Pods",
-    ".gradle",
-    ".m2",
-    "bower_components",
-];
+/// Check if file/directory has system "hidden" flag.
+/// - macOS: BSD `UF_HIDDEN` flag (e.g., ~/Library)
+/// - Windows: `FILE_ATTRIBUTE_HIDDEN` or `FILE_ATTRIBUTE_SYSTEM`
+/// - Linux: no system hidden flags, only dotfiles
+#[cfg(target_os = "macos")]
+fn has_hidden_flag(path: &Path) -> bool {
+    use std::ffi::CString;
+    use std::os::unix::ffi::OsStrExt;
+
+    const UF_HIDDEN: u32 = 0x8000;
+
+    let c_path = match CString::new(path.as_os_str().as_bytes()) {
+        Ok(p) => p,
+        Err(_) => return false,
+    };
+
+    let mut stat_buf: libc::stat = unsafe { std::mem::zeroed() };
+    let result = unsafe { libc::stat(c_path.as_ptr(), &mut stat_buf) };
+
+    if result == 0 {
+        stat_buf.st_flags & UF_HIDDEN != 0
+    } else {
+        false
+    }
+}
+
+#[cfg(target_os = "windows")]
+fn has_hidden_flag(path: &Path) -> bool {
+    use std::os::windows::fs::MetadataExt;
+
+    const FILE_ATTRIBUTE_HIDDEN: u32 = 0x2;
+    const FILE_ATTRIBUTE_SYSTEM: u32 = 0x4;
+
+    if let Ok(meta) = std::fs::metadata(path) {
+        let attrs = meta.file_attributes();
+        (attrs & FILE_ATTRIBUTE_HIDDEN != 0) || (attrs & FILE_ATTRIBUTE_SYSTEM != 0)
+    } else {
+        false
+    }
+}
+
+#[cfg(not(any(target_os = "macos", target_os = "windows")))]
+fn has_hidden_flag(_path: &Path) -> bool {
+    false
+}
 
 pub fn scan_files(
     dir: &Path,
     follow_links: bool,
     min_size: u64,
-    no_ignore: bool,
     extra_ignore: &[String],
     include_hidden: bool,
     progress: &ProgressBar,
 ) -> Result<Vec<walkdir::DirEntry>> {
-    let ignored: HashSet<&str> = if no_ignore {
-        HashSet::new()
-    } else {
-        DEFAULT_IGNORED_DIRS
-            .iter()
-            .copied()
-            .chain(extra_ignore.iter().map(|s| s.as_str()))
-            .collect()
-    };
+    let ignored: HashSet<&str> = extra_ignore.iter().map(|s| s.as_str()).collect();
+
+    // Check if root directory itself is hidden
+    if !include_hidden {
+        if let Some(name) = dir.file_name().and_then(|n| n.to_str())
+            && name.starts_with('.')
+        {
+            return Ok(Vec::new());
+        }
+        if has_hidden_flag(dir) {
+            return Ok(Vec::new());
+        }
+    }
 
     let mut walker = WalkDir::new(dir);
     if !follow_links {
@@ -62,12 +88,18 @@ pub fn scan_files(
 
     let iter = walker.into_iter().filter_entry(|e| {
         if let Some(name) = e.file_name().to_str() {
+            // Skip dotfiles unless --hidden
             if !include_hidden && name.starts_with('.') && name != "." {
                 return false;
             }
+            // Skip ignored directories
             if e.file_type().is_dir() && ignored.contains(name) {
                 return false;
             }
+        }
+        // Skip files/dirs with system hidden flag (macOS UF_HIDDEN)
+        if !include_hidden && has_hidden_flag(e.path()) {
+            return false;
         }
         true
     });

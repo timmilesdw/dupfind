@@ -61,7 +61,6 @@ fn main() -> anyhow::Result<()> {
         dir,
         args.follow_links,
         args.min_size,
-        args.no_ignore,
         &args.ignore,
         args.hidden,
         &scan_progress,

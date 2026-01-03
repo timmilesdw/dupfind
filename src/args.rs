@@ -20,10 +20,6 @@ pub struct Args {
     #[arg(short = 'L', long)]
     pub follow_links: bool,
 
-    /// Don't ignore common directories (.git, node_modules, etc.)
-    #[arg(long)]
-    pub no_ignore: bool,
-
     /// Additional directories to ignore (can be used multiple times)
     #[arg(short, long = "ignore", value_name = "DIR")]
     pub ignore: Vec<String>,

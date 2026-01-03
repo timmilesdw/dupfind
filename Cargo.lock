@@ -270,6 +270,7 @@ dependencies = [
  "env_logger",
  "humansize",
  "indicatif",
+ "libc",
  "log",
  "rayon",
  "serde",

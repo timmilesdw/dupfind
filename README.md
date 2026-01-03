@@ -46,7 +46,7 @@ dupfind -i logs -i tmp /project     # ignore additional directories
 
 ```
 -L, --follow-links     Follow symbolic links
--., --hidden           Include hidden files (starting with '.')
+-H, --hidden           Include hidden files and system directories
 -l, --log-level        Log level (off, error, warn, info, debug, trace)
 -o, --output-json      Save results to JSON file
 -i, --ignore           Additional directories to ignore (repeatable)
@@ -54,6 +54,15 @@ dupfind -i logs -i tmp /project     # ignore additional directories
 --min-size             Skip files smaller than N bytes
 --threads              Thread count (0 = auto)
 ```
+
+### What's ignored by default
+
+- **Dotfiles**: files/directories starting with `.` (`.git`, `.cache`, `.Trash`)
+- **System directories**:
+  - macOS: `~/Library` and others with BSD `UF_HIDDEN` flag
+  - Windows: files with `HIDDEN` or `SYSTEM` attributes
+
+Use `-H/--hidden` to include hidden files.
 
 ## Benchmarks
 
