@@ -4,7 +4,7 @@
 
 Fast duplicate file finder in Rust. Uses two-phase hashing (quick hash -> full hash) and parallel processing.
 
-> **Note:** This is a learning project. For critical/production use, consider mature tools like [fclones](https://github.com/pkolaczk/fclones) or [jdupes](https://github.com/jbruchon/jdupes).
+> **Note:** This is a learning project. For critical/production use, consider mature tools like [fclones](https://github.com/pkolaczk/fclones) or [jdupes](https://codeberg.org/jbruchon/jdupes).
 
 ## Installation
 
